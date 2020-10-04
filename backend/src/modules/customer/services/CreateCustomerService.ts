@@ -1,42 +1,19 @@
-// /* eslint-disable no-useless-constructor */
-// import { injectable, inject } from 'tsyringe'
+/* eslint-disable no-useless-constructor */
+import { inject, injectable } from 'tsyringe'
 
-// interface IRequestDTO {
-//   name: string;
-//   email: string;
-//   password: string;
-// }
+import ICreateCustomerDTO from '../dtos/ICreateCustomerDTO'
+import IGetCustomerDTO from '../dtos/IGetCustormerDTO'
+import ICustomerRepository from '../repositories/ICustomerRepository'
 
-// @injectable()
-// class CreateUserService {
-//   constructor(
-//     @inject('UsersRepository')
-//     private customerRepository: ICus,
+@injectable()
+export default class CreateCustomerService {
+  constructor (
+    @inject('CustomerRepository')
+    private customerRepository: ICustomerRepository
+  ) {}
 
-//     @inject('HashProvider')
-//     private hashProvider: IHashProvider,
-//   ) {}
-
-//   public async execute({ name, email, password }: IRequestDTO): Promise<User> {
-//     const checkUserExists = await this.usersRepository.findByEmail(email);
-
-//     if (checkUserExists) {
-//       throw new AppError(
-//         `An user with the same email ${email} already exists.`,
-//       );
-//     }
-
-//     // const hashedPassword = await hash(password, 8);
-//     const hashedPassword = await this.hashProvider.generateHash(password);
-
-//     const user = await this.usersRepository.create({
-//       name,
-//       email,
-//       password: hashedPassword,
-//     });
-
-//     return user;
-//   }
-// }
-
-// export default CreateUserService;
+  public async execute (customerData: ICreateCustomerDTO): Promise<IGetCustomerDTO> {
+    const createdCustomer = await this.customerRepository.create(customerData)
+    return createdCustomer
+  }
+}

@@ -3,13 +3,12 @@ import 'reflect-metadata'
 
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
-
-import BadRequestError from '../../errors/BadRequestError'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-import neo4jDriver from '../neo4j/index'
 import { container } from 'tsyringe'
+
 import ILoggerProvider from '../../container/providers/LoggerProvider/ILoggerProvider'
+import BadRequestError from '../../errors/BadRequestError'
+import neo4jDriver from '../neo4j'
+import routes from './routes'
 
 const app = express()
 
@@ -18,7 +17,7 @@ app.use(express.json())
 
 const logger = container.resolve<ILoggerProvider>('LoggerProvider')
 
-// app.use(routes)
+app.use(routes)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {

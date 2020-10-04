@@ -1,20 +1,29 @@
-// import { Request, Response } from 'express'
-// import { container } from 'tsyringe'
+import { Request, Response } from 'express'
+import { container } from 'tsyringe'
+import CreateCustomerService from '../../../services/CreateCustomerService'
 
-// export default class CustomerController {
-//   public async create (req: Request, res: Response): Promise<Response> {
-//     const { name, email, password } = req.body
+export default class CustomerController {
+  public async create (req: Request, res: Response): Promise<Response> {
+    const {
+      CPF,
+      active,
+      birthdate,
+      email,
+      name,
+      phone
+    } = req.body
 
-//     const createCustomer = container.resolve('CreateCustomerService')
+    const createCustomer = container.resolve(CreateCustomerService)
 
-//     const user = await createCustomer.execute({
-//       name,
-//       email,
-//       password
-//     })
+    const user = await createCustomer.execute({
+      CPF,
+      active,
+      birthdate,
+      email,
+      name,
+      phone
+    })
 
-//     delete user.password
-
-//     return res.json(user)
-//   }
-// }
+    return res.json(user)
+  }
+}
