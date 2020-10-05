@@ -5,7 +5,7 @@ import IUpdateCustomerDTO from '../dtos/IUpdatedCustomerDTO'
 export default interface ICustomerRepository {
   create(customerData: ICreateCustomerDTO): Promise<IGetCustomerDTO>
   findById(id: string): Promise<IGetCustomerDTO | undefined>
-  findByName(name: string): Promise<IGetCustomerDTO[]>
-  remove(id: string): Promise<boolean>
+  find(name?: string, limit?: number, skip?: number): Promise<IGetCustomerDTO[]>
+  remove(id: string): Promise<{ removed: boolean }>
   update(id: string, customerData: IUpdateCustomerDTO): Promise<IGetCustomerDTO>
 }

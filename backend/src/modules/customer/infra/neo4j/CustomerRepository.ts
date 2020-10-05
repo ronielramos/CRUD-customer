@@ -1,5 +1,4 @@
-import neo4j, { Driver, SessionMode } from 'neo4j-driver'
-import uuid from 'uuid'
+import neo4j, { Driver, QueryResult, SessionMode } from 'neo4j-driver'
 
 import neo4jDriver from '../../../../shared/infra/neo4j'
 import ICreateCustomerDTO from '../../dtos/ICreateCustomerDTO'
@@ -18,36 +17,64 @@ export default class CustomerRepository implements ICustomerRepository {
     this.WRITE = neo4j.session.WRITE
   }
 
+  private formatDateForNeo4j (date: Date | string) {
+    const validDateObj = new Date(date)
+
+    const year = validDateObj.getFullYear()
+    const month = validDateObj.getMonth()
+    const day = validDateObj.getDate()
+
+    const dateNeo4J = new neo4j.types.Date(year, month, day)
+
+    return dateNeo4J
+  }
+
+  private formatCustomer (queryResult: QueryResult): IGetCustomerDTO[] {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const records = queryResult.records.map(record => record.toObject() as any)
+
+    const customers: IGetCustomerDTO[] = records.map(record => {
+      return {
+        ...record.customer.properties,
+        birthdate: new Date(record.customer.properties.birthdate as Date),
+        createdAt: new Date(record.customer.properties.createdAt as Date)
+      }
+    })
+
+    return customers
+  }
+
   async create (customerData: ICreateCustomerDTO): Promise<IGetCustomerDTO> {
     const session = this.driver.session({ defaultAccessMode: this.READ })
 
     const customerToCreate = {
       ...customerData,
-      createdAt: new Date().toISOString(),
-      id: uuid.v4()
+      active: true,
+      birthdate: this.formatDateForNeo4j(customerData.birthdate)
     }
 
     const query = `
       MERGE (customer: Customer {
-        id: $id,
+        id: apoc.create.uuid(),
         CPF: $CPF,
         active: $active,
         birthdate: date($birthdate),
-        createdAt: date($createdAt),
+        createdAt: datetime(),
         email: $email,
         name: $name,
         phone: $phone
       })
 
       RETURN customer
+      LIMIT 1
     `
 
     const result = await session.run(query, customerToCreate)
     await session.close()
 
-    const createdCustomer = result.records.map(record => record.toObject() as IGetCustomerDTO)
+    const customers = this.formatCustomer(result)
 
-    return createdCustomer[0]
+    return customers[0]
   }
 
   async findById (id: string): Promise<IGetCustomerDTO | undefined> {
@@ -57,48 +84,51 @@ export default class CustomerRepository implements ICustomerRepository {
       MATCH (customer: Customer)
       WHERE customer.id = $id
       RETURN customer
+      LIMIT 1
     `
 
     const result = await session.run(query, { id })
     await session.close()
 
-    const customers = result.records.map(record => record.toObject() as IGetCustomerDTO)
+    const customers = this.formatCustomer(result)
 
     return customers[0]
   }
 
-  async findByName (name: string): Promise<IGetCustomerDTO[]> {
+  async find (name?: string, limit = 10, skip = 0): Promise<IGetCustomerDTO[]> {
     const session = this.driver.session({ defaultAccessMode: this.WRITE })
+
+    const whereName = name ? 'WHERE customer.name =~ "$name.*"' : ''
 
     const query = `
       MATCH (customer: Customer)
-      WHERE customer.name =~ '$name.*'
+      ${whereName}
       RETURN customer
+      SKIP $skip
+      LIMIT $limit
     `
 
-    const result = await session.run(query, { name })
+    const result = await session.run(query, { limit, name, skip })
     await session.close()
 
-    const customers = result.records.map(record => record.toObject() as IGetCustomerDTO)
+    const customers = this.formatCustomer(result)
 
     return customers
   }
 
-  async remove (id: string): Promise<boolean> {
+  async remove (id: string): Promise<{ removed: boolean }> {
     const session = this.driver.session({ defaultAccessMode: this.WRITE })
 
     const query = `
-      MATCH (customer: Customer { id: $id })
+      MATCH (customer: Customer)
+      WHERE customer.id = $id
       DELETE customer
-      RETURN customer.id as id
     `
 
-    const result = await session.run(query, { id })
+    await session.run(query, { id })
     await session.close()
 
-    const record = result.records[0]
-
-    return !!record.get('id')
+    return { removed: true }
   }
 
   async update (id: string, customerData: IUpdateCustomerDTO): Promise<IGetCustomerDTO> {
@@ -106,21 +136,27 @@ export default class CustomerRepository implements ICustomerRepository {
 
     const query = `
       MATCH (customer: Customer { id: $id })
-      SET
-        birthdate = date($birthdate)
-        email = $email
-        name = $name
-        phone = $phone
-      })
-
+      SET customer += {
+        birthdate: date($birthdate),
+        email: $email,
+        name: $name,
+        phone: $phone
+      }
       RETURN customer
+      LIMIT 1
     `
 
-    const result = await session.run(query, { ...customerData, id })
+    const parameters = {
+      ...customerData,
+      birthdate: this.formatDateForNeo4j(customerData.birthdate),
+      id
+    }
+
+    const result = await session.run(query, parameters)
     await session.close()
 
-    const updatedCustomer = result.records.map(record => record.toObject() as IGetCustomerDTO)
+    const customers = this.formatCustomer(result)
 
-    return updatedCustomer[0]
+    return customers[0]
   }
 }

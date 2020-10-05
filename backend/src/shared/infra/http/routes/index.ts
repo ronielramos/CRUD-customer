@@ -4,6 +4,6 @@ import customerRouter from '../../../../modules/customer/infra/http/routes/Custo
 
 const routes = Router()
 
-routes.use('/customer', customerRouter)
+routes.use('/v1/customer', customerRouter)
 
 export default routes
