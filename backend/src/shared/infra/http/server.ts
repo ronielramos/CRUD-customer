@@ -1,6 +1,8 @@
 import 'express-async-errors'
 import 'reflect-metadata'
 
+import '../../container'
+
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import { container } from 'tsyringe'
@@ -37,5 +39,6 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 app.listen(process.env.PORT, async () => {
   await neo4jDriver.verifyConnectivity()
 
-  logger.log('✅ - Server on', process.env.PORT)
+  logger.log('✅ - neo4j on')
+  logger.log('✅ - listening on ' + process.env.PORT)
 })
