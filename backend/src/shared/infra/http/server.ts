@@ -19,7 +19,7 @@ app.use(express.json())
 
 const logger = container.resolve<ILoggerProvider>('LoggerProvider')
 
-app.use(routes)
+app.use('/api', routes)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
