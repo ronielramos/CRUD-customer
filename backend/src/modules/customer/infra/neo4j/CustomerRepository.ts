@@ -98,7 +98,7 @@ export default class CustomerRepository implements ICustomerRepository {
   async find (name?: string, limit = 10, skip = 0): Promise<IGetCustomerDTO[]> {
     const session = this.driver.session({ defaultAccessMode: this.WRITE })
 
-    const whereName = name ? 'WHERE customer.name =~ "$name.*"' : ''
+    const whereName = name ? 'WHERE customer.name CONTAINS $name' : ''
 
     const query = `
       MATCH (customer: Customer)
