@@ -1,33 +1,33 @@
-import http from "../../../shared/infra/http";
+import http from '../../../shared/infra/http';
 
-class TutorialDataService {
+class CustomerDataService {
+  constructor(httpClient) {
+    this.http = httpClient;
+  }
+
   getAll() {
-    return http.get("/tutorials");
+    return this.http.get('/v1/customer');
   }
 
   get(id) {
-    return http.get(`/tutorials/${id}`);
+    return this.http.get(`/v1/customer/${id}`);
   }
 
-  create(data) {
-    return http.post("/tutorials", data);
+  create(customer) {
+    return this.http.post('/v1/customer', customer);
   }
 
-  update(id, data) {
-    return http.put(`/tutorials/${id}`, data);
+  update(id, customer) {
+    return this.http.patch(`/v1/customer/${id}`, customer);
   }
 
   delete(id) {
-    return http.delete(`/tutorials/${id}`);
+    return this.http.delete(`/v1/customer/${id}`);
   }
 
-  deleteAll() {
-    return http.delete(`/tutorials`);
-  }
-
-  findByTitle(title) {
-    return http.get(`/tutorials?title=${title}`);
+  findByName(name) {
+    return this.http.get(`/v1/customer?name=${name}`);
   }
 }
 
-export default new TutorialDataService();
+export default new CustomerDataService(http);
