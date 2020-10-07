@@ -1,62 +1,35 @@
-import CustomerDataService from "../../services/CustomerDataService";
+import CustomerDataService from '../../services/CustomerDataService';
+
 export default {
-  name: "customer",
+  name: 'customer',
+
   data() {
     return {
-      currentTutorial: null,
-      message: ''
+      currentCustomer: {},
+      message: '',
+      customerDataService: CustomerDataService,
     };
   },
+
   methods: {
-    getTutorial(id) {
-      CustomerDataService.get(id)
-        .then(response => {
-          this.currentTutorial = response.data;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
+    async getTutorial(id) {
+      const response = await this.customerDataService.get(id);
+      this.currentCustomer = response.data;
     },
-    updatePublished(status) {
-      var data = {
-        id: this.currentTutorial.id,
-        title: this.currentTutorial.title,
-        description: this.currentTutorial.description,
-        published: status
-      };
-      CustomerDataService.update(this.currentTutorial.id, data)
-        .then(response => {
-          this.currentTutorial.published = status;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
+
+    async updateCustomer() {
+      await this.customerDataService.update(this.currentCustomer.id, this.currentCustomer);
+      this.message = 'The Customer was updated successfully!';
     },
-    updateTutorial() {
-      CustomerDataService.update(this.currentTutorial.id, this.currentTutorial)
-        .then(response => {
-          console.log(response.data);
-          this.message = 'The tutorial was updated successfully!';
-        })
-        .catch(e => {
-          console.log(e);
-        });
+
+    async deleteCustomer() {
+      await this.customerDataService.delete(this.currentCustomer.id);
+      this.$router.push({ name: 'customer' });
     },
-    deleteTutorial() {
-      CustomerDataService.delete(this.currentTutorial.id)
-        .then(response => {
-          console.log(response.data);
-          this.$router.push({ name: "tutorials" });
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    }
   },
+
   mounted() {
     this.message = '';
     this.getTutorial(this.$route.params.id);
-  }
+  },
 };
