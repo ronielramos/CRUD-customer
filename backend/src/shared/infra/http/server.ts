@@ -23,13 +23,13 @@ app.use('/api', routes)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  logger.error(err)
+
   if (err instanceof BadRequestError) {
     return res
       .status(err.statusCode)
       .json({ message: err.message, status: 'error' })
   }
-
-  logger.error(err)
 
   return res
     .status(500)
