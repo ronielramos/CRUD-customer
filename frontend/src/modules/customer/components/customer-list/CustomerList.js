@@ -5,6 +5,7 @@ export default {
 
   data() {
     return {
+      errors: [],
       customers: [],
       currentCustomer: null,
       currentIndex: -1,

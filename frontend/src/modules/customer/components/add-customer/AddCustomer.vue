@@ -1,5 +1,23 @@
 <template>
   <div class="submit-form">
+    <div
+      class="alert alert-warning alert-dismissible fade show"
+      v-for="error in errors"
+      :key="error"
+      role="alert"
+    >
+       {{error}}
+      <button
+        type="button"
+        class="close"
+        @click="removeError(error)"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+      <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
     <form v-if="!submitted">
       <div class="form-group">
         <label for="name">Name</label>
@@ -7,6 +25,7 @@
           type="text"
           class="form-control"
           id="name"
+          minlength="2"
           required
           v-model="customer.name"
           name="name"
@@ -29,6 +48,8 @@
         <input
           class="form-control"
           id="cpf"
+          minlength="11"
+          maxlength="11"
           required
           v-model="customer.CPF"
           name="cpf"
@@ -58,7 +79,7 @@
         />
       </div>
 
-      <button type="submit" @click="saveCustomer" class="btn btn-success">Submit</button>
+      <button @click="saveCustomer" class="btn btn-success">Submit</button>
     </form>
 
     <div v-else>

@@ -5,6 +5,7 @@ export default {
 
   data() {
     return {
+      errors: [],
       customer: {
         id: '',
         CPF: '',
@@ -25,7 +26,7 @@ export default {
         .some((field) => field == null || field === '');
     },
 
-    async saveCustomer() {
+    async saveCustomer($event) {
       const data = {
         CPF: this.customer.CPF,
         birthdate: this.customer.birthdate,
@@ -34,19 +35,31 @@ export default {
         phone: this.customer.phone,
       };
 
-      console.log(this.formIsValid(data));
       if (!this.formIsValid(data)) return;
 
-      const response = await this.customerDataService.create(data);
+      try {
+        $event.preventDefault();
+        const response = await this.customerDataService.create(data);
 
-      this.customer.id = response.data.id;
+        this.customer.id = response.data.id;
 
-      this.submitted = true;
+        this.submitted = true;
+
+        this.errors = [];
+      } catch (error) {
+        const { message } = error.response.data;
+        if (this.errors.find((errorMessage) => errorMessage === message)) return;
+        this.errors.push(message);
+      }
     },
 
     newCustomer() {
       this.submitted = false;
       this.customer = {};
+    },
+
+    removeError(errorToRemove) {
+      this.errors = this.errors.filter((error) => error !== errorToRemove);
     },
   },
 };

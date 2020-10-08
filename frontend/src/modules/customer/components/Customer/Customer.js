@@ -5,6 +5,7 @@ export default {
 
   data() {
     return {
+      errors: [],
       currentCustomer: {},
       message: '',
       customerDataService: CustomerDataService,
