@@ -5,11 +5,11 @@ module.exports = {
   },
   extends: [
     'plugin:vue/essential',
-    'airbnb-base'
+    'airbnb-base',
   ],
-  parser: "vue-eslint-parser",
+  parser: 'vue-eslint-parser',
   parserOptions: {
-    sourceType: "module",
+    sourceType: 'module',
     allowImportExportEverywhere: false,
     ecmaFeatures: {
       jsx: true,
@@ -17,13 +17,13 @@ module.exports = {
     },
     ecmaVersion: 12,
     babelOptions: {
-      configFile: "./babel.config.js",
-    }
+      configFile: './babel.config.js',
+    },
   },
   plugins: [
     'vue',
   ],
   rules: {
-    'no-console': 'off'
+    'no-console': 'off',
   },
 };
