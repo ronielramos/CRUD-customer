@@ -13,7 +13,7 @@
     "dev": "nodemon src/shared/infra/http/server.ts",
     "lint": "eslint src/** --ext .ts --fix",
     "prebuild": "rimraf dist",
-    "start": "npm i && pm2 start dist/shared/infra/http/server.js",
+    "start": "npm i && pm2-runtime start dist/shared/infra/http/server.js",
     "test": "npm run test:unidade && npm run test:integracao",
     "test:integracao": "mocha --timeout 0 -r ts-node/register -r dotenv/config \"./**/*.test.ts\"",
     "test:unidade": "mocha --timeout 0 -r ts-node/register -r dotenv/config \"./**/*.spec.ts\""
