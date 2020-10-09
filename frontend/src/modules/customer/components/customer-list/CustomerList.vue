@@ -14,6 +14,23 @@
         </div>
       </div>
     </div>
+    <div
+      class="alert alert-warning alert-dismissible fade show"
+      v-for="error in errors"
+      :key="error"
+      role="alert"
+    >
+       {{error}}
+      <button
+        type="button"
+        class="close"
+        @click="removeError(error)"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+      <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
     <div class="col-md-6">
       <h4>Customers List</h4>
       <ul class="list-group">

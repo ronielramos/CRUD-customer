@@ -15,9 +15,15 @@ export default {
   },
 
   methods: {
-    async getTutorial(id) {
+    async getCustomer(id) {
       const response = await this.customerDataService.get(id);
-      this.currentCustomer = response.data;
+      this.currentCustomer = {
+        ...response.data,
+        birthdate: new Date(response.data.birthdate)
+          .toISOString()
+          .split('T')
+          .shift(),
+      };
     },
 
     async updateCustomer() {
@@ -43,6 +49,6 @@ export default {
 
   mounted() {
     this.message = '';
-    this.getTutorial(this.$route.params.id);
+    this.getCustomer(this.$route.params.id);
   },
 };
