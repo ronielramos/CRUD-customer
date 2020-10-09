@@ -61,6 +61,8 @@
         <input
           class="form-control"
           id="phone"
+          minlength="9"
+          maxlength="14"
           required
           v-model="customer.phone"
           name="phone"
