@@ -11,6 +11,7 @@ import ILoggerProvider from '../../container/providers/LoggerProvider/ILoggerPro
 import BadRequestError from '../../errors/BadRequestError'
 import neo4jDriver from '../neo4j'
 import routes from './routes'
+import path from 'path'
 
 const app = express()
 
@@ -19,17 +20,25 @@ app.use(express.json())
 
 const logger = container.resolve<ILoggerProvider>('LoggerProvider')
 
-app.use(routes)
+app.use('/api', routes)
+
+const frontend = path.join(__dirname, '..', '..', '..', '..', '..', 'frontend', 'dist')
+
+app.use(express.static(frontend))
+
+app.use((req, res) => {
+  res.sendFile(path.join(frontend, 'index.html'))
+})
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  logger.error(err)
+
   if (err instanceof BadRequestError) {
     return res
       .status(err.statusCode)
       .json({ message: err.message, status: 'error' })
   }
-
-  logger.error(err)
 
   return res
     .status(500)
