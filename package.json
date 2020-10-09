@@ -1,0 +1,22 @@
+{
+  "name": "crud-customer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./backend",
+  "scripts": {
+    "start": "npm --prefix ./backend start",
+    "start:frontend": "npm --prefix ./frontend serve",
+    "build:frontend": "npm --prefix ./frontend build",
+    "build:backend": "npm --prefix ./backend build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronielramos/CRUD-customer.git"
+  },
+  "author": "Roniel Gomes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ronielramos/CRUD-customer/issues"
+  },
+  "homepage": "https://github.com/ronielramos/CRUD-customer#readme"
+}
