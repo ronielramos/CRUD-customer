@@ -28,6 +28,7 @@
 
 * Fluxo de login
 * Fluxo de autorização
+* Estilização
 
 ### Backend
 
@@ -55,7 +56,6 @@
 
 #### Secundário
 
-* HTTPS
 * Criar Pipeline
 
 ### Extras (Se possível)
