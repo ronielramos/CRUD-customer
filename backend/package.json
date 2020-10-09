@@ -2,7 +2,7 @@
   "name": "crud-customer-backend",
   "version": "1.0.0",
   "description": "A backend for CRUD of Customers",
-  "main": "app.js",
+  "main": "src/shared/infra/http/server.ts",
   "repository": "https://github.com/ronielramos/CRUD-customer",
   "author": "Roniel Ramos Gomes",
   "license": "MIT",
@@ -13,11 +13,14 @@
     "dev": "nodemon src/shared/infra/http/server.ts",
     "lint": "eslint src/** --ext .ts --fix",
     "prebuild": "rimraf dist",
-    "prod": "node dist/app.js",
+    "prod": "node dist/shared/infra/http/server.js",
     "start": "npm run dev",
     "test": "npm run test:unidade && npm run test:integracao",
     "test:integracao": "mocha --timeout 0 -r ts-node/register -r dotenv/config \"./**/*.test.ts\"",
     "test:unidade": "mocha --timeout 0 -r ts-node/register -r dotenv/config \"./**/*.spec.ts\""
+  },
+  "engines": {
+    "node": "12.x"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
