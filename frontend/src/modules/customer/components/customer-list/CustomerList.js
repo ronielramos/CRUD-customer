@@ -1,3 +1,4 @@
+import ErrorHandlerService from '../../../../shared/services/ErrorHandlerService';
 import CustomerDataService from '../../services/CustomerDataService';
 
 export default {
@@ -11,13 +12,18 @@ export default {
       currentIndex: -1,
       name: '',
       customerDataService: CustomerDataService,
+      errorHandlerService: ErrorHandlerService,
     };
   },
 
   methods: {
     async retrieveCustomers() {
-      const response = await this.customerDataService.getAll();
-      this.customers = response.data;
+      try {
+        const response = await this.customerDataService.getAll();
+        this.customers = response.data;
+      } catch (error) {
+        this.errorHandlerService.handleHttpErrorMessage(error, this.errors);
+      }
     },
 
     async refreshList() {
@@ -27,8 +33,12 @@ export default {
     },
 
     async searchName() {
-      const response = await this.customerDataService.findByName(this.name);
-      this.customers = response.data;
+      try {
+        const response = await this.customerDataService.findByName(this.name);
+        this.customers = response.data;
+      } catch (error) {
+        this.errorHandlerService.handleHttpErrorMessage(error, this.errors);
+      }
     },
 
     async deleteCustomer(id) {
@@ -38,6 +48,10 @@ export default {
 
       this.customers = this.customers
         .filter((customer) => customer.id !== id);
+    },
+
+    removeError(errorToRemove) {
+      this.errors = this.errors.filter((error) => error !== errorToRemove);
     },
   },
 

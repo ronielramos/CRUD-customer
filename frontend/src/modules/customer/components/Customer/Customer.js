@@ -1,4 +1,5 @@
 import CustomerDataService from '../../services/CustomerDataService';
+import ErrorHandlerService from '../../../../shared/services/ErrorHandlerService';
 
 export default {
   name: 'customer',
@@ -9,6 +10,7 @@ export default {
       currentCustomer: {},
       message: '',
       customerDataService: CustomerDataService,
+      errorHandlerService: ErrorHandlerService,
     };
   },
 
@@ -19,13 +21,23 @@ export default {
     },
 
     async updateCustomer() {
-      await this.customerDataService.update(this.currentCustomer.id, this.currentCustomer);
-      this.message = 'The Customer was updated successfully!';
+      try {
+        await this.customerDataService.update(this.currentCustomer.id, this.currentCustomer);
+
+        this.message = 'The Customer was updated successfully!';
+      } catch (error) {
+        this.errorHandlerService.handleHttpErrorMessage(error, this.errors);
+      }
     },
 
     async deleteCustomer() {
-      await this.customerDataService.delete(this.currentCustomer.id);
-      this.$router.push({ name: 'customer' });
+      try {
+        await this.customerDataService.delete(this.currentCustomer.id);
+
+        this.$router.push({ name: 'customer' });
+      } catch (error) {
+        this.errorHandlerService.handleHttpErrorMessage(error, this.errors);
+      }
     },
   },
 

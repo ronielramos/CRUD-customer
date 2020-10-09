@@ -1,3 +1,4 @@
+import ErrorHandlerService from '../../../../shared/services/ErrorHandlerService';
 import CustomerDataService from '../../services/CustomerDataService';
 
 export default {
@@ -16,6 +17,7 @@ export default {
       },
       submitted: false,
       customerDataService: CustomerDataService,
+      errorHandlerService: ErrorHandlerService,
     };
   },
 
@@ -47,9 +49,7 @@ export default {
 
         this.errors = [];
       } catch (error) {
-        const { message } = error.response.data;
-        if (this.errors.find((errorMessage) => errorMessage === message)) return;
-        this.errors.push(message);
+        this.errorHandlerService.handleHttpErrorMessage(error, this.errors);
       }
     },
 
